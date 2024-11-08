@@ -184,7 +184,9 @@ struct DisjointSet
                 rank[root_u]++;
                 return parentsSize[root_u];
             }
-        }else{
+        }
+        else
+        {
             return parentsSize[root_u];
         }
     }
@@ -211,7 +213,9 @@ ll kruskal(ll n, vector<pair<ll, pair<ll, ll>>> &edges)
             connectedComponents--;
             cout << connectedComponents << " " << maxSize << endl;
             mst_weight += weight;
-        }else{
+        }
+        else
+        {
             cout << connectedComponents << " " << maxSize << endl;
         }
     }
@@ -234,13 +238,13 @@ ll kruskal(ll n, vector<pair<ll, pair<ll, ll>>> &edges)
 void solve()
 {
     ll n, m;
-    cin >> n >>m;
-    vector<pair<ll,pair<ll,ll>>> edges;
-    for( int i = 0; i<m; i++)
+    cin >> n >> m;
+    vector<pair<ll, pair<ll, ll>>> edges;
+    for (int i = 0; i < m; i++)
     {
         ll u, v;
         cin >> u >> v;
-        edges.pb({i+1,{--u,--v}});
+        edges.pb({i + 1, {--u, --v}});
     }
     kruskal(n, edges);
 }

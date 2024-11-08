@@ -85,3 +85,4 @@ Here is all my Codeforces practices and solves.
 9. 1400_Have Your Cake and Eat It Too (continuos segement permutation bruteforce)
 10. 1400_C. Sasha and the Casino (most beutiful constructive algo yet)
 11. CSES Traffic_Light
+12. MST road construcntion CSES

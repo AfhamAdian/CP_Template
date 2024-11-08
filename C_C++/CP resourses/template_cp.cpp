@@ -45,7 +45,7 @@ ll pow_ll(ll base, ll exp) {
 }
 
 // DFS on adjacency list O(V+E)
-void dfs(int current_node)
+void dfs(ll current_node, vector<vector<ll>> &adj, vector<bool> &visited)
 {
     if (visited[current_node])  return;
     visited[current_node] = true;
@@ -98,7 +98,6 @@ vector<ll> dijkstra(ll start_node, vector<vector<pair<ll, ll>>> &adj, ll n) {
             }
         }
     }
-
     return dist;
 }
 
