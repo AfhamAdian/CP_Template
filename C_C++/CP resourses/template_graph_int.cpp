@@ -2,56 +2,48 @@
 
 using namespace std;
 
-#define FOR(i, a, b) for (ll i = a; i < (b); i++)
-#define F0R(i, a) for (ll i = 0; i < (a); i++)
+#define FOR(i, a, b) for (int i = a; i < (b); i++)
+#define F0R(i, a) for (int i = 0; i < (a); i++)
 #define trav(a, x) for (auto &a : x)
 
 #define sz(x) (int)(x).size()
 #define mp make_pair
 #define pb push_back
-// #define f first
-// #define s second
 #define lb lower_bound
 #define ub upper_bound
-// #define all(x) x.begin(), x.end()
 #define ins insert
-
-// #define all(x) (x).begin(), (x).end()
-// #define make_unique(x) sort(all((x))); (x).resize(unique(all((x))) - (x).begin()))
 
 #define fast_io                       \
     ios_base::sync_with_stdio(false); \
     cin.tie(0);                       \
     cout.tie(0)
 #define ll long long int
-// #define vi vector<int>
-// #define vll vector<ll>
 
-#define cinall(v, n)               \
-    {                              \
-        for (ll i = 0; i < n; i++) \
-        {                          \
-            ll t;                  \
-            cin >> t;              \
-            v.pb(t);               \
-        }                          \
+#define cinall(v, n)                \
+    {                               \
+        for (int i = 0; i < n; i++) \
+        {                           \
+            int t;                  \
+            cin >> t;               \
+            v.pb(t);                \
+        }                           \
     }
-#define coutall(v, n)              \
-    {                              \
-        for (ll i = 0; i < n; i++) \
-        {                          \
-            cout << v[i] << " ";   \
-        }                          \
-        cout << endl;              \
+#define coutall(v, n)               \
+    {                               \
+        for (int i = 0; i < n; i++) \
+        {                           \
+            cout << v[i] << " ";    \
+        }                           \
+        cout << endl;               \
     }
 
 #define pp(ans) // cout <<  ans << endl
 #define yes cout << "YES\n"
 #define no cout << "NO\n"
 
-ll pow_ll(ll base, ll exp)
+int pow_int(int base, int exp)
 {
-    ll result = 1;
+    int result = 1;
     while (exp > 0)
     {
         if (exp % 2 == 1)
@@ -65,7 +57,7 @@ ll pow_ll(ll base, ll exp)
 }
 
 // DFS on adjacency list O(V+E)
-void dfs(ll current_node, vector<vector<ll>> &adj, vector<bool> &visited)
+void dfs(int current_node, vector<vector<int>> &adj, vector<bool> &visited)
 {
     if (visited[current_node])
         return;
@@ -76,9 +68,9 @@ void dfs(ll current_node, vector<vector<ll>> &adj, vector<bool> &visited)
 }
 
 // BFS on adjacency list O(V+E)
-void bfs(ll start_node, vector<vector<ll>> &adj, vector<bool> &visited)
+void bfs(int start_node, vector<vector<int>> &adj, vector<bool> &visited)
 {
-    queue<ll> q;
+    queue<int> q;
     q.push(start_node);
     visited[start_node] = true;
 
@@ -99,18 +91,18 @@ void bfs(ll start_node, vector<vector<ll>> &adj, vector<bool> &visited)
 }
 
 // dijakstra
-vector<ll> dijkstra(ll start_node, vector<vector<pair<ll, ll>>> &adj, ll n, vector<ll> &parent)
+vector<int> dijkstra(int start_node, vector<vector<pair<int, int>>> &adj, int n, vector<int> &parent)
 {
-    vector<ll> dist(n, LLONG_MAX);
-    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+    vector<int> dist(n, INT_MAX);
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
 
     dist[start_node] = 0;
     pq.push({0, start_node});
 
     while (!pq.empty())
     {
-        ll current_dist = pq.top().first;
-        ll current_node = pq.top().second;
+        int current_dist = pq.top().first;
+        int current_node = pq.top().second;
         pq.pop();
 
         if (current_dist > dist[current_node])
@@ -118,8 +110,8 @@ vector<ll> dijkstra(ll start_node, vector<vector<pair<ll, ll>>> &adj, ll n, vect
 
         for (auto &edge : adj[current_node])
         {
-            ll neighbor = edge.first;
-            ll weight = edge.second;
+            int neighbor = edge.first;
+            int weight = edge.second;
 
             if (dist[current_node] + weight < dist[neighbor])
             {
@@ -135,19 +127,19 @@ vector<ll> dijkstra(ll start_node, vector<vector<pair<ll, ll>>> &adj, ll n, vect
 // MST
 struct DisjointSet
 {
-    vector<ll> parent, rank;
+    vector<int> parent, rank;
 
-    DisjointSet(ll n)
+    DisjointSet(int n)
     {
         parent.resize(n);
         rank.resize(n, 0);
-        for (ll i = 0; i < n; i++)
+        for (int i = 0; i < n; i++)
         {
             parent[i] = i;
         }
     }
 
-    ll find(ll u)
+    int find(int u)
     {
         if (u != parent[u])
         {
@@ -156,10 +148,10 @@ struct DisjointSet
         return parent[u];
     }
 
-    void unite(ll u, ll v)
+    void unite(int u, int v)
     {
-        ll root_u = find(u);
-        ll root_v = find(v);
+        int root_u = find(u);
+        int root_v = find(v);
 
         if (root_u != root_v)
         {
@@ -180,17 +172,17 @@ struct DisjointSet
     }
 };
 
-ll kruskal(ll n, vector<pair<ll, pair<ll, ll>>> &edges)
+int kruskal(int n, vector<pair<int, pair<int, int>>> &edges)
 {
     sort(edges.begin(), edges.end());
     DisjointSet ds(n);
-    ll mst_weight = 0;
+    int mst_weight = 0;
 
     for (auto &edge : edges)
     {
-        ll weight = edge.first;
-        ll u = edge.second.first;
-        ll v = edge.second.second;
+        int weight = edge.first;
+        int u = edge.second.first;
+        int v = edge.second.second;
 
         if (ds.find(u) != ds.find(v))
         {
@@ -202,48 +194,44 @@ ll kruskal(ll n, vector<pair<ll, pair<ll, ll>>> &edges)
     return mst_weight;
 }
 
-void track_parent(ll child_node, vector<ll> &ans, vector<ll> &parent)
+void track_parent(int child_node, vector<int> &ans, vector<int> &parent)
 {
     ans.pb(child_node);
-    ll parent_node = parent[child_node];
+    int parent_node = parent[child_node];
     if (parent_node == -1)
         return;
     track_parent(parent_node, ans, parent);
 }
 
-// -Examine Test Cases
-// -Analyze why it is behaving that way
-// -Come with a Hypothesis
-// -Disprove the Hypothesis
-
-// -Prepare a code outline
-// -check if the code outline validates the test cases
-// -code
-// -think of corner case before submitting
-
 // solve function
 
 void solve()
 {
-    ll n, m;
+    int n, m;
     cin >> n >> m;
 
-    vector<vector<pair<ll, ll>>> graph(n);
-    vector<ll> parent(n, -1);
+    vector<vector<pair<int, int>>> graph(n);
+    vector<int> parent(n, -1);
 
-    for (ll i = 0; i < m; i++)
+    for (int i = 0; i < m; i++)
     {
-        ll a, b;
+        int a, b;
         cin >> a >> b;
         a--;
         b--;
         graph[a].pb({b, -1});
     }
 
-    vector<ll> dist = dijkstra(0, graph, n, parent);
-    cout << -1 * dist[n - 1] + 1 << endl;
+    vector<int> dist = dijkstra(0, graph, n, parent);
+    int distn = dist[n - 1];
+    if (distn == INT_MAX)
+    {
+        cout << "IMPOSSIBLE" << endl;
+        return;
+    }
+    cout << -1 * distn + 1 << endl;
 
-    vector<ll> ans;
+    vector<int> ans;
 
     track_parent(n - 1, ans, parent);
     reverse(ans.begin(), ans.end());
@@ -255,12 +243,11 @@ void solve()
 int main()
 {
     fast_io;
-    // bool multi = true;
     bool multi = false;
 
     if (multi)
     {
-        ll t;
+        int t;
         cin >> t;
         while (t--)
             solve();
