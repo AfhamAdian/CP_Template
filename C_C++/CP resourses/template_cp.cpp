@@ -102,7 +102,60 @@ vector<ll> dijkstra(ll start_node, vector<vector<pair<ll, ll>>> &adj, ll n) {
     return dist;
 }
 
+// MST
+struct DisjointSet {
+    vector<ll> parent, rank;
 
+    DisjointSet(ll n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (ll i = 0; i < n; i++) {
+            parent[i] = i;
+        }
+    }
+
+    ll find(ll u) {
+        if (u != parent[u]) {
+            parent[u] = find(parent[u]);
+        }
+        return parent[u];
+    }
+
+    void unite(ll u, ll v) {
+        ll root_u = find(u);
+        ll root_v = find(v);
+
+        if (root_u != root_v) {
+            if (rank[root_u] > rank[root_v]) {
+                parent[root_v] = root_u;
+            } else if (rank[root_u] < rank[root_v]) {
+                parent[root_u] = root_v;
+            } else {
+                parent[root_v] = root_u;
+                rank[root_u]++;
+            }
+        }
+    }
+};
+
+ll kruskal(ll n, vector<pair<ll, pair<ll, ll>>> &edges) {
+    sort(edges.begin(), edges.end());
+    DisjointSet ds(n);
+    ll mst_weight = 0;
+
+    for (auto &edge : edges) {
+        ll weight = edge.first;
+        ll u = edge.second.first;
+        ll v = edge.second.second;
+
+        if (ds.find(u) != ds.find(v)) {
+            ds.unite(u, v);
+            mst_weight += weight;
+        }
+    }
+
+    return mst_weight;
+}
 
 // -Examine Test Cases
 // -Analyze why it is behaving that way
@@ -134,6 +187,6 @@ int main()
     }
 
     solve();
-
+`
     return 0;
 }

@@ -17,7 +17,7 @@ using namespace std;
 #define ins insert
 
 // #define all(x) (x).begin(), (x).end()
-// #define make_unique(x) sort(all((x))); (x).resize(unique(all((x))) - (x).begin())
+// #define make_unique(x) sort(all((x))); (x).resize(unique(all((x))) - (x).begin()))
 
 #define fast_io                       \
     ios_base::sync_with_stdio(false); \
@@ -49,6 +49,159 @@ using namespace std;
 #define yes cout << "YES\n"
 #define no cout << "NO\n"
 
+ll pow_ll(ll base, ll exp)
+{
+    ll result = 1;
+    while (exp > 0)
+    {
+        if (exp % 2 == 1)
+        {
+            result *= base;
+        }
+        base *= base;
+        exp /= 2;
+    }
+    return result;
+}
+
+// DFS on adjacency list O(V+E)
+void dfs(int current_node)
+{
+    if (visited[current_node])
+        return;
+    visited[current_node] = true;
+
+    for (int neighbor : adj[current_node])
+        dfs(neighbor);
+}
+
+// BFS on adjacency list O(V+E)
+void bfs(ll start_node, vector<vector<ll>> &adj, vector<bool> &visited)
+{
+    queue<ll> q;
+    q.push(start_node);
+    visited[start_node] = true;
+
+    while (!q.empty())
+    {
+        int current_node = q.front();
+        q.pop();
+
+        for (int neighbor : adj[current_node])
+        {
+            if (!visited[neighbor])
+            {
+                visited[neighbor] = true;
+                q.push(neighbor);
+            }
+        }
+    }
+}
+
+// dijakstra
+vector<ll> dijkstra(ll start_node, vector<vector<pair<ll, ll>>> &adj, ll n)
+{
+    vector<ll> dist(n, LLONG_MAX);
+    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+
+    dist[start_node] = 0;
+    pq.push({0, start_node});
+
+    while (!pq.empty())
+    {
+        ll current_dist = pq.top().first;
+        ll current_node = pq.top().second;
+        pq.pop();
+
+        if (current_dist > dist[current_node])
+            continue;
+
+        for (auto &edge : adj[current_node])
+        {
+            ll neighbor = edge.first;
+            ll weight = edge.second;
+
+            if (dist[current_node] + weight < dist[neighbor])
+            {
+                dist[neighbor] = dist[current_node] + weight;
+                pq.push({dist[neighbor], neighbor});
+            }
+        }
+    }
+
+    return dist;
+}
+
+// MST
+struct DisjointSet
+{
+    vector<ll> parent, rank;
+
+    DisjointSet(ll n)
+    {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (ll i = 0; i < n; i++)
+        {
+            parent[i] = i;
+        }
+    }
+
+    ll find(ll u)
+    {
+        if (u != parent[u])
+        {
+            parent[u] = find(parent[u]);
+        }
+        return parent[u];
+    }
+
+    void unite(ll u, ll v)
+    {
+        ll root_u = find(u);
+        ll root_v = find(v);
+
+        if (root_u != root_v)
+        {
+            if (rank[root_u] > rank[root_v])
+            {
+                parent[root_v] = root_u;
+            }
+            else if (rank[root_u] < rank[root_v])
+            {
+                parent[root_u] = root_v;
+            }
+            else
+            {
+                parent[root_v] = root_u;
+                rank[root_u]++;
+            }
+        }
+    }
+};
+
+ll kruskal(ll n, vector<pair<ll, pair<ll, ll>>> &edges)
+{
+    sort(edges.begin(), edges.end());
+    DisjointSet ds(n);
+    ll mst_weight = 0;
+
+    for (auto &edge : edges)
+    {
+        ll weight = edge.first;
+        ll u = edge.second.first;
+        ll v = edge.second.second;
+
+        if (ds.find(u) != ds.find(v))
+        {
+            ds.unite(u, v);
+            mst_weight += weight;
+        }
+    }
+
+    return mst_weight;
+}
+
 // -Examine Test Cases
 // -Analyze why it is behaving that way
 // -Come with a Hypothesis
@@ -59,80 +212,19 @@ using namespace std;
 // -code
 // -think of corner case before submitting
 
-ll n;
-vector<ll> dist(n, LLONG_MAX);
-void dijkstra(ll start, ll n, vector<vector<pair<ll, ll>>> &adj)
+// solve function
+
+void solve()
 {
-    priority_queue<pair<ll,ll>> pq;
-    
-    dist[start] = 0;
-    pq.push({0, start});
-
-    while( !pq.empty() ){
-        ll vertex = pq.top().second;
-        ll weight = pq.top().first;
-        pq.pop();
-
-        if( weight > dist[vertex] ) continue;
-        for( auto edges : adj[vertex] )
-        {
-            ll to = edges.first;
-            ll len = edges.second;
-
-            if( dist[vertex] + len < dist[to] ){
-                dist[to] = dist[vertex] + len;
-                pq.push({dist[to], to});
-            }
-        }
-    }
-
-
-}
-
-void solve(ll t)
-{
-    vector<ll> v;
-    for( int i = 0; i<3; i++)
+    ll n, m;
+    cin >> n >>m;
+    vector<pair<ll,pair<ll,ll>>> edges;
+    for( int i = 0; i<m; i++)
     {
-        ll y;
-        cin >> y;
-        v.pb(y);    
-
+        ll u, v, w;
+        cin >> u >> v;
+        edges.pb({i+1,{--u,--v}});
     }
-
-    sort( v.begin(), v.end() );
-    ll win = 0;
-    ll draw = 0;
-
-    for( int i = 0; i<3; i++)
-    {
-        win += v[i]/3;
-        draw += v[i]%3;
-    }
-
-    if( draw%2 == 1){
-        cout << "Case " << t << ": invalidum" << endl;
-        return;
-    }
-    draw = draw/2;
-
-    if( win == 3 && draw == 0){
-        cout << "Case " << t << ": perfectus" << endl;
-        return;
-    }
-    if( win == 2 && draw == 1){
-        cout << "Case " << t << ": perfectus" << endl;
-        return;
-    }
-    if( win == 1 && draw == 2){
-        cout << "Case " << t << ": perfectus" << endl;
-        return;
-    }
-    if( win == 0 && draw == 3){
-        cout << "Case " << t <<  ": perfectus" << endl;
-        return;
-    }
-    cout << "Case " <<  t << ": invalidum" << endl;
 }
 
 int main()
@@ -145,15 +237,12 @@ int main()
     {
         ll t;
         cin >> t;
-        for( int i = 1; i<=t; i++)
-        {
-            solve(i);
-        }
+        while (t--)
+            solve();
         return 0;
     }
 
-    // solve();
+    solve();
 
     return 0;
 }
-
